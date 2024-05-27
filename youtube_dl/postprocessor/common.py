@@ -61,7 +61,8 @@ class PostProcessor(object):
         except Exception:
             self._downloader.report_warning(errnote)
 
-    def _configuration_args(self, default=[]):
+    def _configuration_args(self, default=None):
+        default = [] if default is None else default
         return cli_configuration_args(self._downloader.params, 'postprocessor_args', default)
 
 

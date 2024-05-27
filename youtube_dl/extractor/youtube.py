@@ -407,7 +407,10 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
             ('owner', 'videoOwner'), 'videoOwnerRenderer', 'title',
             'runs', Ellipsis]
 
-    def _extract_channel_id(self, webpage, videodetails={}, metadata={}, renderers=[]):
+    def _extract_channel_id(self, webpage, videodetails=None, metadata=None, renderers=None):
+        videodetails = {} if videodetails is None else videodetails
+        metadata = {} if metadata is None else metadata
+        renderers = [] if renderers is None else renderers
         channel_id = None
         if any((videodetails, metadata, renderers)):
             channel_id = (
@@ -422,7 +425,10 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
             'channelId', webpage, 'channel id', default=None)
 
     def _extract_author_var(self, webpage, var_name,
-                            videodetails={}, metadata={}, renderers=[]):
+                            videodetails=None, metadata=None, renderers=None):
+        videodetails = {} if videodetails is None else videodetails
+        metadata = {} if metadata is None else metadata
+        renderers = [] if renderers is None else renderers
         result = None
         paths = {
             #       (HTML, videodetails, metadata, renderers)

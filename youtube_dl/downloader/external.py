@@ -105,7 +105,8 @@ class ExternalFD(FileDownloader):
     def _valueless_option(self, command_option, param, expected_value=True):
         return cli_valueless_option(self.params, command_option, param, expected_value)
 
-    def _configuration_args(self, default=[]):
+    def _configuration_args(self, default=None):
+        default = [] if default is None else default
         return cli_configuration_args(self.params, 'external_downloader_args', default)
 
     def _write_cookies(self):

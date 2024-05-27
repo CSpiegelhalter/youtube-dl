@@ -205,7 +205,8 @@ class TVNowNewIE(InfoExtractor):
 
 
 class TVNowNewBaseIE(InfoExtractor):
-    def _call_api(self, path, video_id, query={}):
+    def _call_api(self, path, video_id, query=None):
+        query = {} if query is None else query
         result = self._download_json(
             'https://apigw.tvnow.de/module/' + path, video_id, query=query)
         error = result.get('error')

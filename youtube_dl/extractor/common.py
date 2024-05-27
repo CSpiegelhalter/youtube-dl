@@ -627,12 +627,14 @@ class InfoExtractor(object):
         else:
             assert False
 
-    def _request_webpage(self, url_or_request, video_id, note=None, errnote=None, fatal=True, data=None, headers={}, query={}, expected_status=None):
+    def _request_webpage(self, url_or_request, video_id, note=None, errnote=None, fatal=True, data=None, headers=None, query=None, expected_status=None):
         """
         Return the response handle.
 
         See _download_webpage docstring for arguments specification.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         if note is None:
             self.report_download_webpage(video_id)
         elif note is not False:
@@ -685,12 +687,14 @@ class InfoExtractor(object):
                 self._downloader.report_warning(errmsg)
                 return False
 
-    def _download_webpage_handle(self, url_or_request, video_id, note=None, errnote=None, fatal=True, encoding=None, data=None, headers={}, query={}, expected_status=None):
+    def _download_webpage_handle(self, url_or_request, video_id, note=None, errnote=None, fatal=True, encoding=None, data=None, headers=None, query=None, expected_status=None):
         """
         Return a tuple (page content as string, URL handle).
 
         See _download_webpage docstring for arguments specification.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         # Strip hashes from the URL (#1038)
         if isinstance(url_or_request, (compat_str, str)):
             url_or_request = url_or_request.partition('#')[0]
@@ -787,7 +791,7 @@ class InfoExtractor(object):
     def _download_webpage(
             self, url_or_request, video_id, note=None, errnote=None,
             fatal=True, tries=1, timeout=5, encoding=None, data=None,
-            headers={}, query={}, expected_status=None):
+            headers=None, query=None, expected_status=None):
         """
         Return the data of the page as a string.
 
@@ -821,6 +825,8 @@ class InfoExtractor(object):
             Note that this argument does not affect success status codes (2xx)
             which are always accepted.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
 
         success = False
         try_count = 0
@@ -845,13 +851,15 @@ class InfoExtractor(object):
     def _download_xml_handle(
             self, url_or_request, video_id, note='Downloading XML',
             errnote='Unable to download XML', transform_source=None,
-            fatal=True, encoding=None, data=None, headers={}, query={},
+            fatal=True, encoding=None, data=None, headers=None, query=None,
             expected_status=None):
         """
         Return a tuple (xml as an compat_etree_Element, URL handle).
 
         See _download_webpage docstring for arguments specification.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_webpage_handle(
             url_or_request, video_id, note, errnote, fatal=fatal,
             encoding=encoding, data=data, headers=headers, query=query,
@@ -867,12 +875,14 @@ class InfoExtractor(object):
             self, url_or_request, video_id,
             note='Downloading XML', errnote='Unable to download XML',
             transform_source=None, fatal=True, encoding=None,
-            data=None, headers={}, query={}, expected_status=None):
+            data=None, headers=None, query=None, expected_status=None):
         """
         Return the xml as an compat_etree_Element.
 
         See _download_webpage docstring for arguments specification.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_xml_handle(
             url_or_request, video_id, note=note, errnote=errnote,
             transform_source=transform_source, fatal=fatal, encoding=encoding,
@@ -895,13 +905,15 @@ class InfoExtractor(object):
     def _download_json_handle(
             self, url_or_request, video_id, note='Downloading JSON metadata',
             errnote='Unable to download JSON metadata', transform_source=None,
-            fatal=True, encoding=None, data=None, headers={}, query={},
+            fatal=True, encoding=None, data=None, headers=None, query=None,
             expected_status=None):
         """
         Return a tuple (JSON object, URL handle).
 
         See _download_webpage docstring for arguments specification.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_webpage_handle(
             url_or_request, video_id, note, errnote, fatal=fatal,
             encoding=encoding, data=data, headers=headers, query=query,
@@ -916,13 +928,15 @@ class InfoExtractor(object):
     def _download_json(
             self, url_or_request, video_id, note='Downloading JSON metadata',
             errnote='Unable to download JSON metadata', transform_source=None,
-            fatal=True, encoding=None, data=None, headers={}, query={},
+            fatal=True, encoding=None, data=None, headers=None, query=None,
             expected_status=None):
         """
         Return the JSON object as a dict.
 
         See _download_webpage docstring for arguments specification.
         """
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_json_handle(
             url_or_request, video_id, note=note, errnote=errnote,
             transform_source=transform_source, fatal=fatal, encoding=encoding,
@@ -1533,7 +1547,8 @@ class InfoExtractor(object):
                 unique_formats.append(f)
         formats[:] = unique_formats
 
-    def _is_valid_url(self, url, video_id, item='video', headers={}):
+    def _is_valid_url(self, url, video_id, item='video', headers=None):
+        headers = {} if headers is None else headers
         url = self._proto_relative_url(url, scheme='http:')
         # For now assume non HTTP(S) URLs always valid
         if not (url.startswith('http://') or url.startswith('https://')):
@@ -1573,7 +1588,9 @@ class InfoExtractor(object):
 
     def _extract_f4m_formats(self, manifest_url, video_id, preference=None, f4m_id=None,
                              transform_source=lambda s: fix_xml_ampersands(s).strip(),
-                             fatal=True, m3u8_id=None, data=None, headers={}, query={}):
+                             fatal=True, m3u8_id=None, data=None, headers=None, query=None):
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         manifest = self._download_xml(
             manifest_url, video_id, 'Downloading f4m manifest',
             'Unable to download f4m manifest',
@@ -1704,8 +1721,10 @@ class InfoExtractor(object):
     def _extract_m3u8_formats(self, m3u8_url, video_id, ext=None,
                               entry_protocol='m3u8', preference=None,
                               m3u8_id=None, note=None, errnote=None,
-                              fatal=True, live=False, data=None, headers={},
-                              query={}):
+                              fatal=True, live=False, data=None, headers=None,
+                              query=None):
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_webpage_handle(
             m3u8_url, video_id,
             note=note or 'Downloading m3u8 information',
@@ -2141,7 +2160,9 @@ class InfoExtractor(object):
             })
         return entries
 
-    def _extract_mpd_formats(self, mpd_url, video_id, mpd_id=None, note=None, errnote=None, fatal=True, data=None, headers={}, query={}):
+    def _extract_mpd_formats(self, mpd_url, video_id, mpd_id=None, note=None, errnote=None, fatal=True, data=None, headers=None, query=None):
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_xml_handle(
             mpd_url, video_id,
             note=note or 'Downloading MPD manifest',
@@ -2440,7 +2461,9 @@ class InfoExtractor(object):
                         self.report_warning('Unknown MIME type %s in DASH manifest' % mime_type)
         return formats
 
-    def _extract_ism_formats(self, ism_url, video_id, ism_id=None, note=None, errnote=None, fatal=True, data=None, headers={}, query={}):
+    def _extract_ism_formats(self, ism_url, video_id, ism_id=None, note=None, errnote=None, fatal=True, data=None, headers=None, query=None):
+        headers = {} if headers is None else headers
+        query = {} if query is None else query
         res = self._download_xml_handle(
             ism_url, video_id,
             note=note or 'Downloading ISM manifest',
@@ -2675,7 +2698,8 @@ class InfoExtractor(object):
                 entries.append(media_info)
         return entries
 
-    def _extract_akamai_formats(self, manifest_url, video_id, hosts={}):
+    def _extract_akamai_formats(self, manifest_url, video_id, hosts=None):
+        hosts = {} if hosts is None else hosts
         signed = 'hdnea=' in manifest_url
         if not signed:
             # https://learn.akamai.com/en-us/webhelp/media-services-on-demand/stream-packaging-user-guide/GUID-BE6C0F73-1E06-483B-B0EA-57984B91B7F9.html
@@ -2731,7 +2755,8 @@ class InfoExtractor(object):
 
         return formats
 
-    def _extract_wowza_formats(self, url, video_id, m3u8_entry_protocol='m3u8_native', skip_protocols=[]):
+    def _extract_wowza_formats(self, url, video_id, m3u8_entry_protocol='m3u8_native', skip_protocols=None):
+        skip_protocols = [] if skip_protocols is None else skip_protocols
         query = compat_urlparse.urlparse(url).query
         url = re.sub(r'/(?:manifest|playlist|jwplayer)\.(?:m3u8|f4m|mpd|smil)', '', url)
         mobj = re.search(
@@ -2983,7 +3008,8 @@ class InfoExtractor(object):
         return res
 
     def _set_cookie(self, domain, name, value, expire_time=None, port=None,
-                    path='/', secure=False, discard=False, rest={}, **kwargs):
+                    path='/', secure=False, discard=False, rest=None, **kwargs):
+        rest = {} if rest is None else rest
         cookie = compat_cookiejar_Cookie(
             0, name, value, port, port is not None, domain, True,
             domain.startswith('.'), path, True, secure, expire_time,

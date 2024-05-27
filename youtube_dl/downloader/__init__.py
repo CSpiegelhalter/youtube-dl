@@ -5,7 +5,8 @@ from ..utils import (
 )
 
 
-def get_suitable_downloader(info_dict, params={}):
+def get_suitable_downloader(info_dict, params=None):
+    params = {} if params is None else params
     info_dict['protocol'] = determine_protocol(info_dict)
     info_copy = info_dict.copy()
     return _get_suitable_downloader(info_copy, params)
@@ -39,8 +40,9 @@ PROTOCOL_MAP = {
 }
 
 
-def _get_suitable_downloader(info_dict, params={}):
+def _get_suitable_downloader(info_dict, params=None):
     """Get the downloader class that can handle the info dict."""
+    params = {} if params is None else params
 
     # if (info_dict.get('start_time') or info_dict.get('end_time')) and not info_dict.get('requested_formats') and FFmpegFD.can_download(info_dict):
     #     return FFmpegFD
