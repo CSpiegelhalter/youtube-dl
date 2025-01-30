@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import itertools
 import json
 import os.path
-import random
 import re
 import traceback
 
@@ -56,6 +55,7 @@ from ..utils import (
     urlencode_postdata,
     urljoin,
 )
+import secrets
 
 
 class YoutubeBaseInfoExtractor(InfoExtractor):
@@ -1733,7 +1733,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         # cpn generation algorithm is reverse engineered from base.js.
         # In fact it works even with dummy cpn.
         CPN_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_'
-        cpn = ''.join((CPN_ALPHABET[random.randint(0, 256) & 63] for _ in range(0, 16)))
+        cpn = ''.join((CPN_ALPHABET[secrets.SystemRandom().randint(0, 256) & 63] for _ in range(0, 16)))
 
         playback_url = update_url(
             playback_url, query_update={
